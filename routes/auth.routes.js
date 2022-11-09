@@ -2,6 +2,8 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const uploader = require("../middlewares/cloudinary.js");
 const User = require("../models/User.model.js");
+const jwt = require("jsonwebtoken");
+const isAuthenticated = require("../middlewares/auth.middlewares");
 
 
 //* AUTHENTICATION ROUTES
@@ -78,5 +80,55 @@ router.post("/signup", uploader.single("profileImage"), async (req, res, next) =
     next(error);
   }
 });
+
+
+// POST "/api/auth/login" => Validate user credentials
+router.post("/login", async (req, res, next) => {
+   
+    const { email, password } = req.body;
+  
+    // Validation 1. Fields must not be empty
+    if (!email || !password) {
+      res.status(400).json({ errorMessage: "Debe tener email y contraseña" });
+      return;
+    }
+  
+    try {
+      
+      // Validation 2. User already exists in the Database
+      const foundUser = await User.findOne({email: email})
+      if (foundUser === null) {
+          res.status(400).json({errorMessage: "Credenciales no válidas"})
+          return;
+      }
+  
+      // Validation 3. Password for found user in DB is correct
+      const isPasswordValid = await bcrypt.compare(password, foundUser.password)
+      if (isPasswordValid === false) {
+          res.status(400).json({errorMessage: "Credenciales no válidas"})
+          return;
+      }
+  
+      // Send user info to the FE in the payload
+      const payload = {
+          _id: foundUser._id,
+          name: foundUser.name,
+          email: foundUser.email
+      }
+  
+      // Token parameters
+      const authToken = jwt.sign(
+          payload,
+          process.env.TOKEN_SECRET,
+          { algorithm: "HS256", expiresIn: "6h" }
+      )
+  
+      // Send token to the client
+      res.status(200).json({ authToken: authToken});
+  
+    } catch (error) {
+      next(error);
+    }
+  });
 
 module.exports = router;
