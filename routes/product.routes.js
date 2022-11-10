@@ -55,6 +55,22 @@ router.patch("/:productId/details", async (req, res, next) => {
     }
   })
 
+  // DELETE "/api/product/:productId" => delete product
+  router.delete("/:productId", async (req, res, next) => {
+    const {productId} = req.params
+    try {
+  
+      await Product.findByIdAndDelete(productId)
+  
+      res.status(200).json("Producto borrado")
+  
+    } catch (error) {
+      next(error)
+    }
+
+  })
+
+
 
 
 

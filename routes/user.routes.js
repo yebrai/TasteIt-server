@@ -3,7 +3,7 @@ const User = require("../models/User.model")
 const uploader = require("../middlewares/cloudinary.js");
 const bcrypt = require("bcryptjs");
 
-// GET "/api/user" => render all products
+// GET "/api/user" => render all users
 router.get("/", async (req, res, next) => {
 
     try {
@@ -15,19 +15,7 @@ router.get("/", async (req, res, next) => {
     }
 })
 
-// GET "/api/user" => render all products
-router.get("/", async (req, res, next) => {
-
-    try {
-        const response = await User.find()
-        res.status(200).json(response)
-        
-    } catch (error) {
-        next(error)
-    }
-})
-
-// GET "/api/:userId/details" => render all products
+// GET "/api/user/:userId/details" => render user
 router.get("/:userId/details", async (req, res, next) => {
     const {userId} = req.params
     try {
@@ -39,7 +27,7 @@ router.get("/:userId/details", async (req, res, next) => {
     }
 })
 
-// PATCH "/api/:userId/details" => render all products
+// PATCH "/api/user/:userId/details" => edit user
 router.patch("/:userId/details",  uploader.single("profileImage"), async (req, res, next) => {
     const {userId} = req.params
     const { name, email, age, password } = req.body;
@@ -95,7 +83,7 @@ router.patch("/:userId/details",  uploader.single("profileImage"), async (req, r
         email,
         age,
         password: hashPassword,
-        profileImage: req.file?.path,
+        Image: req.file?.path,
     };
 
     const response = await User.findByIdAndUpdate(userId, editUser)
@@ -105,6 +93,21 @@ router.patch("/:userId/details",  uploader.single("profileImage"), async (req, r
         next(error)
     }
 })
+
+// DELETE "/api/user/:userId" => delete user
+router.delete("/:userId", async (req, res, next) => {
+    const {userId} = req.params
+    try {
+  
+      await User.findByIdAndDelete(userId)
+  
+      res.status(200).json("Documento borrado")
+  
+    } catch (error) {
+      next(error)
+    }
+
+  })
 
 
 
