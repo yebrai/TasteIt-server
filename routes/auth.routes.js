@@ -133,6 +133,6 @@ router.post("/login", async (req, res, next) => {
   // GET "/api/auth/verify" => Backend to tell client if user has been validated or not through its token
   router.get("/verify", isAuthenticated, (req, res, next) => {
     res.status(200).json({ user: req.payload })
-})
+  })
 
 module.exports = router;

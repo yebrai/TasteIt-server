@@ -7,6 +7,10 @@ const productSchema = new Schema(
       required: true,
       trim: true,
     },
+    category: {
+      type: [String],
+      enum: ["foods", "desserts", "drinks"]
+    },
     price: {
       type: Number,
       required: true,
