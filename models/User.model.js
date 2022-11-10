@@ -29,7 +29,13 @@ const userSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "Product",
       },
+      
     ],
+    role: {
+      type: String,
+      enum: ["user", "admin", "moderators"],
+      default: "user"
+    }
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
