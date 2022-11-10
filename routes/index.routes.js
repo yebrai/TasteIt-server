@@ -10,4 +10,7 @@ router.use("/auth", authRoutes)
 const productRoutes = require("./product.routes")
 router.use("/product", productRoutes)
 
+const userRoutes = require("./user.routes")
+router.use("/user", userRoutes)
+
 module.exports = router;

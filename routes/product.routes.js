@@ -19,6 +19,7 @@ router.get("/", async (req, res, next) => {
 router.post("/add", async (req, res, next) => {
 
   try {
+    
     await Product.create(req.body)
     res.status(201).json("Producto creado")
 

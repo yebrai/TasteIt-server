@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
     cloudinary,
     params: {
         allowedFormats: ["jpg", "png"],
-        folder: "patata"
+        folder: "profileImage"
     }
 })
 
