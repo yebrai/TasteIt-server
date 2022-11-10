@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const uploader = require("../middlewares/cloudinary.js");
 const User = require("../models/User.model.js");
 const jwt = require("jsonwebtoken");
 const isAuthenticated = require("../middlewares/auth.middlewares");
@@ -8,11 +7,11 @@ const isAuthenticated = require("../middlewares/auth.middlewares");
 
 //* AUTHENTICATION ROUTES
 // POST "/api/auth/signup" => registers a new user (receives user name, email and password from FE)
-router.post("/signup", uploader.single("profileImage"), async (req, res, next) => {
+router.post("/signup", async (req, res, next) => {
   const { name, email, age, password, passwordConfirmation } = req.body;
 
   // Validation 1. Fields must not be empty
-  if (!name || !email || !password) {
+  if (!name || !age || !email || !password) {
     res.status(400).json({ errorMessage: "Todos los campos deben ser rellenados" });
     return;
   }
@@ -66,8 +65,7 @@ router.post("/signup", uploader.single("profileImage"), async (req, res, next) =
       name,
       email,
       age,
-      password: hashPassword,
-      profileImage: req.file?.path,
+      password: hashPassword
     };
 
     // Create user in the DB
@@ -130,5 +128,11 @@ router.post("/login", async (req, res, next) => {
       next(error);
     }
   });
+
+
+  // GET "/api/auth/verify" => Backend to tell client if user has been validated or not through its token
+  router.get("/verify", isAuthenticated, (req, res, next) => {
+    res.status(200).json({ user: req.payload })
+})
 
 module.exports = router;
