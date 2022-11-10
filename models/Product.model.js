@@ -8,7 +8,7 @@ const productSchema = new Schema(
       trim: true,
     },
     category: {
-      type: [String],
+      type: String,
       enum: ["foods", "desserts", "drinks"]
     },
     price: {
