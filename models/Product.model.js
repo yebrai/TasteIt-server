@@ -7,9 +7,19 @@ const productSchema = new Schema(
       required: true,
       trim: true,
     },
+    description: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    image: {
+      type: String,
+      required: true
+    },
     category: {
       type: String,
-      enum: ["foods", "desserts", "drinks"]
+      enum: ["foods", "desserts", "drinks"],
+      required: true
     },
     price: {
       type: Number,
