@@ -4,7 +4,6 @@ const isAuthenticated =require("../middlewares/auth.middlewares")
 const uploader = require("../middlewares/cloudinary.js");
 
 
-
 // GET "/api/product" => render all products
 router.get("/:type", async (req, res, next) => {
 
@@ -13,9 +12,9 @@ router.get("/:type", async (req, res, next) => {
 
     try {
         if (req.params.type === "all") {
-          response = await Product.find()
+          response = await Product.find().populate("owner", "_id")
         } else {
-          response = await Product.find({category: req.params.type})
+          response = await Product.find({category: req.params.type}).populate("owner", "_id")
         }
         res.status(200).json(response)
     } catch (error) {
@@ -27,7 +26,7 @@ router.get("/:type", async (req, res, next) => {
 
 // POST "/api/product/add" => register a new product (receives user name, email and password from FE)
 router.post("/add", isAuthenticated,  uploader.single("image"), async (req, res, next) => {
-console.log("console test",req.payload)
+
   const {name, category, price, location, description} = req.body
 
   const newProduct = {
@@ -53,6 +52,7 @@ console.log("console test",req.payload)
 // GET "/api/product/:productId/details" => render product (receives user name, email and password from FE)
 router.get("/:productId/details", async (req, res, next) => {
     const {productId} = req.params
+
     try {
 
       const response = await Product.findById(productId)
@@ -68,7 +68,7 @@ router.patch("/:productId/details", async (req, res, next) => {
     const {productId} = req.params
     try {
 
-      const response = await Product.findByIdAndUpdate(productId, req.body)
+      const response = await Product.findByIdAndUpdate(productId, req.body).populate("owner", "name")
       res.status(201).json(response)
   
     } catch (error) {
