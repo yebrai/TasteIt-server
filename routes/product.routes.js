@@ -3,10 +3,17 @@ const Product =require("../models/Product.model.js")
 
 
 // GET "/api/product" => render all products
-router.get("/", async (req, res, next) => {
+router.get("/:type", async (req, res, next) => {
+
+    // Stores the chosen product list
+    let response = "";
 
     try {
-        const response = await Product.find()
+        if (req.params.type === "all") {
+          response = await Product.find()
+        } else {
+          response = await Product.find({category: req.params.type})
+        }
         res.status(200).json(response)
     } catch (error) {
         next(error)
