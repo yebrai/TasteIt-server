@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User.model")
 const uploader = require("../middlewares/cloudinary.js");
 const bcrypt = require("bcryptjs");
+const isAuthenticated = require("../middlewares/auth.middlewares");
 
 // GET "/api/user" => render all users
 router.get("/", async (req, res, next) => {
@@ -15,12 +16,14 @@ router.get("/", async (req, res, next) => {
     }
 })
 
-// GET "/api/user/:userId/details" => render user
-router.get("/:userId/details", async (req, res, next) => {
-    const {userId} = req.params
+// GET "/api/user/details" => render user
+router.get("/details", isAuthenticated, async (req, res, next) => {
+    
     try {
-        const response = await User.findById(userId)
+        const response = await User.findById(req.payload._id)
         res.status(200).json(response)
+        console.log(response)
+     
         
     } catch (error) {
         next(error)
@@ -28,7 +31,7 @@ router.get("/:userId/details", async (req, res, next) => {
 })
 
 // PATCH "/api/user/:userId/details" => edit user
-router.patch("/:userId/details",  uploader.single("img"), async (req, res, next) => {
+router.patch("/:userId/details",  uploader.single("image"), async (req, res, next) => {
     const {userId} = req.params
     const { name, email, age, password } = req.body;
 
@@ -83,7 +86,7 @@ router.patch("/:userId/details",  uploader.single("img"), async (req, res, next)
         email,
         age,
         password: hashPassword,
-        profileImage: req.file?.path,
+        image: req.file?.path,
     };
 
     const response = await User.findByIdAndUpdate(userId, editUser)
