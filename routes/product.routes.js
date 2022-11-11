@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Product =require("../models/Product.model.js")
 const isAuthenticated =require("../middlewares/auth.middlewares")
+const uploader = require("../middlewares/cloudinary.js");
 
 
 
@@ -25,15 +26,17 @@ router.get("/:type", async (req, res, next) => {
 
 
 // POST "/api/product/add" => register a new product (receives user name, email and password from FE)
-router.post("/add", isAuthenticated, async (req, res, next) => {
+router.post("/add", isAuthenticated,  uploader.single("image"), async (req, res, next) => {
 console.log("console test",req.payload)
-  const {name, category, price, location} = req.body
+  const {name, category, price, location, description} = req.body
 
   const newProduct = {
     name,
     category,
     price,
     location,
+    image: req.file?.path,
+    description,
     owner: req.payload._id
   }
   try {

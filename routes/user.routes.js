@@ -28,7 +28,7 @@ router.get("/:userId/details", async (req, res, next) => {
 })
 
 // PATCH "/api/user/:userId/details" => edit user
-router.patch("/:userId/details",  uploader.single("profileImage"), async (req, res, next) => {
+router.patch("/:userId/details",  uploader.single("img"), async (req, res, next) => {
     const {userId} = req.params
     const { name, email, age, password } = req.body;
 
@@ -83,7 +83,7 @@ router.patch("/:userId/details",  uploader.single("profileImage"), async (req, r
         email,
         age,
         password: hashPassword,
-        Image: req.file?.path,
+        profileImage: req.file?.path,
     };
 
     const response = await User.findByIdAndUpdate(userId, editUser)
