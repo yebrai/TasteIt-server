@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const Product =require("../models/Product.model.js")
+const isAuthenticated =require("../middlewares/auth.middlewares")
+
 
 
 // GET "/api/product" => render all products
@@ -23,12 +25,21 @@ router.get("/:type", async (req, res, next) => {
 
 
 // POST "/api/product/add" => register a new product (receives user name, email and password from FE)
-router.post("/add", async (req, res, next) => {
+router.post("/add", isAuthenticated, async (req, res, next) => {
+console.log("console test",req.payload)
+  const {name, category, price, location} = req.body
 
+  const newProduct = {
+    name,
+    category,
+    price,
+    location,
+    owner: req.payload._id
+  }
   try {
     
-    await Product.create(req.body)
-    res.status(201).json("Producto creado")
+    await Product.create(newProduct)
+    res.status(201).json("creado")
 
   } catch (error) {
     next(error)
