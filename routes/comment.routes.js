@@ -2,6 +2,22 @@ const router = require("express").Router();
 const isAuthenticated = require("../middlewares/auth.middlewares");
 const Comment = require("../models/Comment.model")
 
+// GET "/api/comment/:productId" => render all comments of a product
+router.get("/:productId", async (req, res, next) => {
+
+    const { productId } = req.params;
+
+    try {
+        const response = await Comment.find({product: productId}).populate("user", "name profileImage")
+        res.status(200).json(response)
+
+    } catch (error) {
+        next(error)
+    }
+
+})
+
+
 // POST "/api/comment/:productId/add" => register a new comment
 router.post("/:productId/add", isAuthenticated, async (req, res, next) => {
   
