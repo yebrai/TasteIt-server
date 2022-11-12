@@ -111,7 +111,8 @@ router.post("/login", async (req, res, next) => {
       const payload = {
           _id: foundUser._id,
           name: foundUser.name,
-          email: foundUser.email
+          email: foundUser.email,
+          profileImage: foundUser.profileImage
       }
   
       // Token parameters

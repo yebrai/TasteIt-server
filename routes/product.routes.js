@@ -55,7 +55,6 @@ router.get("/:productId/details", async (req, res, next) => {
 
     try {
       const response = await Product.findById(productId).populate("owner", "name")
-      console.log(response)
       res.status(201).json(response)
   
     } catch (error) {
@@ -83,10 +82,10 @@ router.patch("/:productId/details", isAuthenticated, uploader.single("image"), a
         price,
         location,
         image: req.file?.path,
-    };
-
+      };
+  
       const response = await Product.findByIdAndUpdate(productId, editProduct)
-      res.status(201).json(response)
+      res.status(200).json(response)
   
     } catch (error) {
       next(error)
