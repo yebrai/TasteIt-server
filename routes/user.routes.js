@@ -69,18 +69,17 @@ router.patch("/:userId/details",  uploader.single("image"), async (req, res, nex
 
   
   try {
-        // Validation 6: Email doesn't already exists in the DB
-        const foundEmail = await User.findOne({ email });
+    // Validation 6: Email doesn't already exists in the DB
+    const foundEmail = await User.findOne({ email });
     if (foundEmail !== null) {
       res.status(400).json({ errorMessage: "El email ya ha sido previamente registrado" });
-      return;
+    return;
     }
 
     // Password Encrypting
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
-    
     const editUser = {
         name,
         email,

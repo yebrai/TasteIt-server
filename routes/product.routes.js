@@ -54,7 +54,6 @@ router.get("/:productId/details", async (req, res, next) => {
     const {productId} = req.params
 
     try {
-
       const response = await Product.findById(productId).populate("owner", "name")
       console.log(response)
       res.status(201).json(response)
@@ -64,12 +63,29 @@ router.get("/:productId/details", async (req, res, next) => {
     }
   })
 
-  // PATCH "/api/product/:productId/details" => edit product (receives user name, email and password from FE)
-router.patch("/:productId/details", async (req, res, next) => {
-    const {productId} = req.params
+  // PATCH "/api/product/:productId/details" => edit product
+router.patch("/:productId/details", isAuthenticated, uploader.single("image"), async (req, res, next) => {
+    const { productId } = req.params
+    const { name, description, category, price, location} = req.body;
+    
+    // Validation 1. Fields must not be empty
+    if (!name || !description || !category || !price || !location) {
+      res.status(400).json({ errorMessage: "Todos los campos deben ser rellenados" });
+      return;
+    }
+
     try {
 
-      const response = await Product.findByIdAndUpdate(productId, req.body)
+      const editProduct = {
+        name,
+        description,
+        category,
+        price,
+        location,
+        image: req.file?.path,
+    };
+
+      const response = await Product.findByIdAndUpdate(productId, editProduct)
       res.status(201).json(response)
   
     } catch (error) {
