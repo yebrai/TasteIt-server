@@ -55,7 +55,8 @@ router.get("/:productId/details", async (req, res, next) => {
 
     try {
 
-      const response = await Product.findById(productId)
+      const response = await Product.findById(productId).populate("owner", "name")
+      console.log(response)
       res.status(201).json(response)
   
     } catch (error) {
@@ -68,7 +69,7 @@ router.patch("/:productId/details", async (req, res, next) => {
     const {productId} = req.params
     try {
 
-      const response = await Product.findByIdAndUpdate(productId, req.body).populate("owner", "name")
+      const response = await Product.findByIdAndUpdate(productId, req.body)
       res.status(201).json(response)
   
     } catch (error) {
