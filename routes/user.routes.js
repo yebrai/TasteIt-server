@@ -85,7 +85,7 @@ router.patch("/:userId/details",  uploader.single("image"), async (req, res, nex
         email,
         age,
         password: hashPassword,
-        image: req.file?.path,
+        profileImage: req.file?.path,
     };
 
     const response = await User.findByIdAndUpdate(userId, editUser)
