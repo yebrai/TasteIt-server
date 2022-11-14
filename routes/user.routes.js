@@ -150,6 +150,4 @@ router.delete("/cart/:productId/delete", isAuthenticated, async (req, res, next)
 });
 
 
-
-
 module.exports = router;
