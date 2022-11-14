@@ -113,10 +113,10 @@ router.delete("/:userId", async (req, res, next) => {
   })
 
   //Path "/api/user/:productId"
-  router.patch("/:productId", isAuthenticated, async(req, res, next) => {
-    const {productId} = req.params
+  router.patch("/cart/add", isAuthenticated, async(req, res, next) => {
+    const {productArr} = req.body
     try {
-      await User.findByIdAndUpdate(req.payload._id, {$push: {shoppingCart: productId}})
+      await User.findByIdAndUpdate(req.payload._id, {$pushAll: {shoppingCart: productArr}})
       res.status(200).json("Added product")
 
     } catch (error) {
