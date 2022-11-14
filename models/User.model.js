@@ -27,6 +27,7 @@ const userSchema = new Schema(
     shoppingCart: [
       {
         type: Schema.Types.ObjectId,
+        usePushEach: true,
         ref: "Product",
       },
     ],
