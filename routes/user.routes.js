@@ -3,6 +3,7 @@ const User = require("../models/User.model")
 const uploader = require("../middlewares/cloudinary.js");
 const bcrypt = require("bcryptjs");
 const isAuthenticated = require("../middlewares/auth.middlewares");
+const Product = require("../models/Product.model");
 
 // GET "/api/user" => render all users
 router.get("/", async (req, res, next) => {
@@ -21,6 +22,7 @@ router.get("/details", isAuthenticated, async (req, res, next) => {
     
     try {
         const response = await User.findById(req.payload._id)
+        //.populate({path:'shoppingCart', populate:{path:'name'}})
         res.status(200).json(response)
         console.log(response)
      
@@ -110,6 +112,34 @@ router.delete("/:userId", async (req, res, next) => {
     }
 
 })
+
+  //Path "/api/user/:productId"
+  router.patch("/:productId", isAuthenticated, async(req, res, next) => {
+    const {productId} = req.params
+    try {
+      const producto = await Product.findById(productId)
+      await User.findByIdAndUpdate(req.payload._id, {$push: {shoppingCart: producto._id}})
+      res.status(200).json("Producto añadido")
+
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  //GET "/api/user/userId/cart"
+  router.get("/cart", isAuthenticated, async (req, res, next) => {
+    
+    try {
+        const foundUser = await User.findById(req.payload._id).populate("shoppingCart")
+        res.status(200).json(foundUser.shoppingCart)
+        console.log(shoppingCart)
+    } catch (error) {
+        next(error)
+    }
+})
+
+
+
 
 
 
