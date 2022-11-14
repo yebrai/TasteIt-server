@@ -116,7 +116,6 @@ router.delete("/:userId", async (req, res, next) => {
   //Path "/api/user/:productId"
   router.patch("/:productId", isAuthenticated, async(req, res, next) => {
     const {productId} = req.params
-  
     try {
       const producto = await Product.findById(productId)
       await User.findByIdAndUpdate(req.payload._id, {$push: {shoppingCart: producto._id}})
@@ -134,12 +133,14 @@ router.delete("/:userId", async (req, res, next) => {
         const foundUser = await User.findById(req.payload._id).populate("shoppingCart")
         res.status(200).json(foundUser.shoppingCart)
         console.log(shoppingCart)
-     
-        
     } catch (error) {
         next(error)
     }
 })
+
+
+
+
 
 
 module.exports = router;
