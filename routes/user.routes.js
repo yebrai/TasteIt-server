@@ -110,7 +110,7 @@ router.delete("/:userId", async (req, res, next) => {
       next(error)
     }
 
-  })
+})
 
   //Path "/api/user/:productId"
   router.patch("/cart/add", isAuthenticated, async(req, res, next) => {
@@ -146,8 +146,6 @@ router.delete("/cart/:productId/delete", isAuthenticated, async (req, res, next)
     next(error);
   }
 });
-
-
 
 
 module.exports = router;
