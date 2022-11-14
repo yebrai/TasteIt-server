@@ -22,7 +22,7 @@ router.get("/details", isAuthenticated, async (req, res, next) => {
     
     try {
         const response = await User.findById(req.payload._id)
-        .populate("shoppingCart")
+        //.populate({path:'shoppingCart', populate:{path:'name'}})
         res.status(200).json(response)
         console.log(response)
      
@@ -126,6 +126,20 @@ router.delete("/:userId", async (req, res, next) => {
       next(error)
     }
   })
+
+  //GET "/api/user/userId/cart"
+  router.get("/cart", isAuthenticated, async (req, res, next) => {
+    
+    try {
+        const foundUser = await User.findById(req.payload._id).populate("shoppingCart")
+        res.status(200).json(foundUser.shoppingCart)
+        console.log(shoppingCart)
+     
+        
+    } catch (error) {
+        next(error)
+    }
+})
 
 
 module.exports = router;
