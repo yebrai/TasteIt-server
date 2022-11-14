@@ -22,7 +22,6 @@ router.get("/details", isAuthenticated, async (req, res, next) => {
     
     try {
         const response = await User.findById(req.payload._id)
-        //.populate({path:'shoppingCart', populate:{path:'name'}})
         res.status(200).json(response)
         console.log(response)
      
@@ -105,7 +104,7 @@ router.delete("/:userId", async (req, res, next) => {
   
       await User.findByIdAndDelete(userId)
   
-      res.status(200).json("Documento borrado")
+      res.status(200).json("Deleted document")
   
     } catch (error) {
       next(error)
@@ -117,9 +116,8 @@ router.delete("/:userId", async (req, res, next) => {
   router.patch("/:productId", isAuthenticated, async(req, res, next) => {
     const {productId} = req.params
     try {
-      const producto = await Product.findById(productId)
-      await User.findByIdAndUpdate(req.payload._id, {$push: {shoppingCart: producto._id}})
-      res.status(200).json("Producto añadido")
+      await User.findByIdAndUpdate(req.payload._id, {$push: {shoppingCart: productId}})
+      res.status(200).json("Added product")
 
     } catch (error) {
       next(error)
@@ -132,13 +130,22 @@ router.delete("/:userId", async (req, res, next) => {
     try {
         const foundUser = await User.findById(req.payload._id).populate("shoppingCart")
         res.status(200).json(foundUser.shoppingCart)
-        console.log(shoppingCart)
     } catch (error) {
         next(error)
     }
 })
 
+// DELETE "/api/user/cart/:productId/delete" => delete product
 
+router.delete("/cart/:productId/delete", isAuthenticated, async (req, res, next) => {
+  const {productId} = req.params
+  try {
+     await User.findByIdAndUpdate(req.payload._id, {$pull: {shoppingCart: productId, }})
+    res.status(200).json("Producto borrado");
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 
