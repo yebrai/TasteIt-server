@@ -109,7 +109,7 @@ router.delete("/:userId", async (req, res, next) => {
       next(error)
     }
 
-  })
+})
 
 
 
