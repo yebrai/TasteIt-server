@@ -31,6 +31,12 @@ const userSchema = new Schema(
         ref: "Product",
       },
     ],
+    favourites: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
     role: {
       type: String,
       enum: ["user", "admin", "moderators"],
