@@ -3,7 +3,19 @@ const Product = require("../models/Product.model.js");
 const isAuthenticated = require("../middlewares/auth.middlewares");
 const uploader = require("../middlewares/cloudinary.js");
 
-// GET "/api/product" => render all products
+// GET "/api/products" => gets all products from DB
+router.get("/", async (req, res, next) => {
+
+  try {
+    const response = await Product.find();
+    res.status(200).json(response);
+
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET "/api/product" => renders all products depending on the passed type
 router.get("/:type", async (req, res, next) => {
   // Stores the chosen product list
   let response = "";
