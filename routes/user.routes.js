@@ -130,7 +130,6 @@ router.delete("/:userId", async (req, res, next) => {
 
   //GET "/api/user/cart"
   router.get("/cart", isAuthenticated, async (req, res, next) => {
-    
     try {
         const foundUser = await User.findById(req.payload._id).populate("shoppingCart")
         res.status(200).json(foundUser.shoppingCart)
@@ -141,16 +140,50 @@ router.delete("/:userId", async (req, res, next) => {
 })
 
 // DELETE "/api/user/cart/:productId/delete" => delete product
-
 router.delete("/cart/:productId/delete", isAuthenticated, async (req, res, next) => {
   const {productId} = req.params
   try {
-     await User.findByIdAndUpdate(req.payload._id, {$pull: {shoppingCart: productId, }})
-    res.status(200).json("Producto borrado");
+    await User.findByIdAndUpdate(req.payload._id, {$pull: {shoppingCart: productId}})
+    res.status(200).json("Product was deleted");
   } catch (error) {
     next(error);
   }
 });
+
+// GET "/api/user/favourites" => gets all the favourite products for current online user
+router.get("/favourites", isAuthenticated, async (req, res, next) => {
+  try {
+      const favouritesArr = await User.findById(req.payload._id).select("favourites")
+      res.status(200).json(favouritesArr)
+
+  } catch (error) {
+      next(error)
+  }
+})
+
+// POST "/api/user/:favouriteId" => to add a new favourite product in the user
+router.post("/favourite/add", isAuthenticated, async (req, res, next) => {
+  try {
+      const favouritesArr = await User.findByIdAndUpdate(req.payload._id, {$addToSet: {favourites: req.body}})
+      res.status(200).json(favouritesArr)
+
+  } catch (error) {
+      next(error)
+  }
+})
+
+// DELETE "/api/user/:favouriteId" => to delete a favourite product from user favourites list
+router.delete("/:favouriteId/delete", isAuthenticated, async (req, res, next) => {
+  const {favouriteId} = req.params
+
+  try {
+    await User.findByIdAndUpdate(req.payload._id, {$pull: {favourites: favouriteId}})
+    res.status(200).json("Favourite was deleted")
+
+  } catch (error) {
+      next(error)
+  }
+})
 
 
 module.exports = router;
