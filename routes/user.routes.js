@@ -114,11 +114,7 @@ router.delete("/:userId", async (req, res, next) => {
 
   //Path "/api/cart/add"
   router.patch("/cart/add", isAuthenticated, async(req, res, next) => {
-    const {productArr} = req.body
-    console.log(productArr)
-    console.log(req.body)
-    //consultar req.body - cambiamos pushAll por push, añadiendo usePushEach en el modelo user
-
+    
     try {
       await User.findByIdAndUpdate(req.payload._id, {$push: {shoppingCart: req.body}})
       res.status(200).json("Added product")

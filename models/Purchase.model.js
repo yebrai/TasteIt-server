@@ -13,7 +13,6 @@ const purchaseSchema = new Schema(
       },
     ],
     price: Number,
-    shippingCost: Number,
   },
   {
     timestamps: true,
