@@ -16,4 +16,7 @@ router.use("/user", userRoutes)
 const commentRoutes = require("./comment.routes")
 router.use("/comment", commentRoutes)
 
+const purchaseRoutes = require("./purchase.routes")
+router.use("/purchase", purchaseRoutes)
+
 module.exports = router;
