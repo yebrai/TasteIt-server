@@ -131,11 +131,18 @@ router.patch("/:productId/rate", isAuthenticated, async (req, res, next) => {
 
   try {
 
-    await Product.findByIdAndUpdate(productId, {$addToSet: { whoRates: req.payload}}, {new: true});
-    
-    await Product.findByIdAndUpdate(productId, {$addToSet: { ratings: rating}}, {new: true});
+    const productToRate = await Product.findById(productId)
+    console.log(productToRate)
 
-    res.status(200).json("Añadidos");
+    if (productToRate.whoRates.includes(req.payload._id)) {
+      res.status(200).json("El usuario ya ha dado una valoración del producto")
+
+    } else {
+      await Product.findByIdAndUpdate(productId, {$addToSet: { whoRates: req.payload._id}}, {new: true})
+      await Product.findByIdAndUpdate(productId, {$addToSet: { ratings: rating}}, {new: true});
+
+      res.status(200).json("Valoración añadida")
+    }
 
   } catch (error) {
     next(error);
