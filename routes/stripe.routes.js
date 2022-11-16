@@ -3,7 +3,7 @@ const Stripe = require("stripe")
 
 const stripe = new Stripe(process.env.STRIPE)
 
-// POST /api/stripe 
+// POST /api/stripe register payment in stripe.
 router.post("/", async (req, res, next) => {
     const {id, amount} = req.body
 
@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
         res.status(200).json("Compra registrada")
     } catch (error) {
         console.log(error)
-        res.json({message: error})
+        res.status(400).json("errorMessage:", error)
     }
 
 })
