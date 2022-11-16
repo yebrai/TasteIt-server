@@ -123,4 +123,23 @@ router.delete("/:productId", async (req, res, next) => {
   }
 });
 
+// PATCH "/api/product/:productId/rate" => changes (or adds if it is the first time user rates the product) a product rating
+router.patch("/:productId/rate", isAuthenticated, async (req, res, next) => {
+  const { productId } = req.params
+  
+  const rating = Number(Object.keys(req.body)[0])
+
+  try {
+
+    await Product.findByIdAndUpdate(productId, {$addToSet: { whoRates: req.payload}}, {new: true});
+    
+    await Product.findByIdAndUpdate(productId, {$addToSet: { ratings: rating}}, {new: true});
+
+    res.status(200).json("Añadidos");
+
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

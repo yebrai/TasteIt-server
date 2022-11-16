@@ -144,6 +144,16 @@ router.delete("/cart/:productId/delete", isAuthenticated, async (req, res, next)
   }
 });
 
+// DELETE "/api/user/cart/delete" => delete the entire cart of the current user after the purchase is done
+router.delete("/cart/delete", isAuthenticated, async (req, res, next) => {
+  try {
+    await User.findByIdAndUpdate(req.payload._id, {$set: {shoppingCart: []}})
+    res.status(200).json("Product was deleted");
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET "/api/user/favourites" => gets all the favourite products for current online user
 router.get("/favourites", isAuthenticated, async (req, res, next) => {
   try {
