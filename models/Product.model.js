@@ -32,8 +32,13 @@ const productSchema = new Schema(
     },
     owner: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "User"
     },
+    whoRates: [{
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }],
+    ratings: [Number]
   },
   {
     timestamps: true,
