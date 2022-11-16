@@ -161,6 +161,17 @@ router.get("/favourites", isAuthenticated, async (req, res, next) => {
   }
 })
 
+// GET "/api/user/favourites" => gets all the favourite products for current online user
+router.get("/my-favourites", isAuthenticated, async (req, res, next) => {
+  try {
+      const favouritesArr = await User.findById(req.payload._id).select("favourites").populate("favourites")
+      res.status(200).json(favouritesArr)
+
+  } catch (error) {
+      next(error)
+  }
+})
+
 // POST "/api/user/:favouriteId" => to add a new favourite product in the user
 router.post("/favourite/add", isAuthenticated, async (req, res, next) => {
   try {
