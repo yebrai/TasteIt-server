@@ -19,4 +19,7 @@ router.use("/comment", commentRoutes)
 const purchaseRoutes = require("./purchase.routes")
 router.use("/purchase", purchaseRoutes)
 
+const stripeRoutes = require("./stripe.routes")
+router.use("/stripe", stripeRoutes)
+
 module.exports = router;
