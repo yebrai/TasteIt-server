@@ -23,8 +23,6 @@ router.get("/details", isAuthenticated, async (req, res, next) => {
     try {
         const response = await User.findById(req.payload._id)
         res.status(200).json(response)
-        console.log(response)
-     
         
     } catch (error) {
         next(error)
