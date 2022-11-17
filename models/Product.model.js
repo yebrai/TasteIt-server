@@ -14,7 +14,8 @@ const productSchema = new Schema(
     },
     image: {
       type: String,
-      required: true
+      required: true,
+      default: "https://nuwaay.com/wp-content/uploads/2022/01/default_256.png"
     },
     category: {
       type: String,

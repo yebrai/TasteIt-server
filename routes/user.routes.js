@@ -48,20 +48,26 @@ router.patch("/:userId/details",  uploader.single("image"), async (req, res, nex
     return;
   }
 
-  // Validation 3. Name should at least contain 3 characters
+  // Validation 3. Age must be a number
+  if (isNaN(Number(age))) {
+    res.status(400).json({ errorMessage: "La edad debe ser un número" });
+    return;
+  }  
+
+  // Validation 4. Name should at least contain 3 characters
   if (name.length < 3) {
     res.status(400).json({ errorMessage: "El nombre de usuario debe tener al menos 3 carácteres" });
     return;
   }
 
-  // Validation 4. Email format validation
+  // Validation 5. Email format validation
   const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
   if (!emailRegex.test(email)) {
     res.status(400).json({ errorMessage: "Formato de correo electrónico incorrecto" });
     return;
   }
 
-  // Validation 5. Password format validation
+  // Validation 6. Password format validation
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
   if (!passwordRegex.test(password)) {
     res.status(400).json({ errorMessage: "La contraseña debe tener al menos 8 letras, una mayúscula y un número" });
@@ -70,7 +76,7 @@ router.patch("/:userId/details",  uploader.single("image"), async (req, res, nex
 
   
   try {
-    // Validation 6: Email doesn't already exists in the DB
+    // Validation 7: Email doesn't already exists in the DB
     const foundEmail = await User.findOne({ email });
     if (foundEmail !== null) {
       res.status(400).json({ errorMessage: "El email ya ha sido previamente registrado" });
