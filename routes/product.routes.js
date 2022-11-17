@@ -43,6 +43,18 @@ router.post(
   async (req, res, next) => {
     const { name, category, price, location, description } = req.body;
 
+    // Validation 1: all the fields must be completed
+    if (!name || !category || !price || !location || !description) {
+      res.status(400).json({ errorMessage: "Todos los campos deben ser rellenados" });
+      return;
+    }
+
+    // Validation 2. Price must be a number
+  if (isNaN(Number(price))) {
+    res.status(400).json({ errorMessage: "El precio debe ser un número" });
+    return;
+  }  
+
     const newProduct = {
       name,
       category,
@@ -131,11 +143,18 @@ router.patch("/:productId/rate", isAuthenticated, async (req, res, next) => {
 
   try {
 
-    await Product.findByIdAndUpdate(productId, {$addToSet: { whoRates: req.payload}}, {new: true});
-    
-    await Product.findByIdAndUpdate(productId, {$addToSet: { ratings: rating}}, {new: true});
+    const productToRate = await Product.findById(productId)
+    console.log(productToRate)
 
-    res.status(200).json("Añadidos");
+    if (productToRate.whoRates.includes(req.payload._id)) {
+      res.status(200).json("Valoración previamente añadida")
+
+    } else {
+      await Product.findByIdAndUpdate(productId, {$addToSet: { whoRates: req.payload._id}}, {new: true})
+      await Product.findByIdAndUpdate(productId, {$addToSet: { ratings: rating}}, {new: true});
+
+      res.status(200).json("Valoración añadida")
+    }
 
   } catch (error) {
     next(error);
