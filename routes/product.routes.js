@@ -105,6 +105,12 @@ router.patch(
       return;
     }
 
+    // Validation 2. Price must be a number
+    if (isNaN(Number(price))) {
+      res.status(400).json({ errorMessage: "El precio debe ser un número" });
+      return;
+    }  
+
     try {
       const editProduct = {
         name,
@@ -126,6 +132,7 @@ router.patch(
 // DELETE "/api/product/:productId" => delete product
 router.delete("/:productId", async (req, res, next) => {
   const { productId } = req.params;
+  
   try {
     await Product.findByIdAndDelete(productId);
 

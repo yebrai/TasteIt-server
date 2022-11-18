@@ -17,7 +17,6 @@ router.get("/:productId", async (req, res, next) => {
 
 })
 
-
 // POST "/api/comment/:productId/add" => register a new comment
 router.post("/:productId/add", isAuthenticated, async (req, res, next) => {
   
@@ -38,6 +37,19 @@ router.post("/:productId/add", isAuthenticated, async (req, res, next) => {
     next(error)
   }
 
+});
+
+// DELETE "/api/comment/:commentId" => delete comment from a productId
+router.delete("/:commentId", async (req, res, next) => {
+  const { commentId } = req.params;
+
+  try {
+    await Comment.findByIdAndDelete(commentId);
+    res.status(200).json("Comentario borrado");
+
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
