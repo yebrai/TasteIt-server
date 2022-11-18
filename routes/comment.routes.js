@@ -19,7 +19,7 @@ router.get("/:productId", async (req, res, next) => {
 
 // POST "/api/comment/:productId/add" => register a new comment
 router.post("/:productId/add", isAuthenticated, async (req, res, next) => {
-  
+
   const { productId } = req.params;
   const { message } = req.body;
 
