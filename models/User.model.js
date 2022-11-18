@@ -40,8 +40,8 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: ["user", "admin", "moderators"],
-      default: "user"
-    }
+      default: "user",
+    },
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`

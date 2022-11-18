@@ -4,7 +4,6 @@ const User = require("../models/User.model.js");
 const jwt = require("jsonwebtoken");
 const isAuthenticated = require("../middlewares/auth.middlewares");
 
-
 //* AUTHENTICATION ROUTES
 // POST "/api/auth/signup" => registers a new user (receives user name, email and password from FE)
 router.post("/signup", async (req, res, next) => {
@@ -12,7 +11,9 @@ router.post("/signup", async (req, res, next) => {
 
   // Validation 1. Fields must not be empty
   if (!name || !age || !email || !password) {
-    res.status(400).json({ errorMessage: "Todos los campos deben ser rellenados" });
+    res
+      .status(400)
+      .json({ errorMessage: "Todos los campos deben ser rellenados" });
     return;
   }
 
@@ -26,31 +27,47 @@ router.post("/signup", async (req, res, next) => {
   if (isNaN(Number(age))) {
     res.status(400).json({ errorMessage: "La edad debe ser un número" });
     return;
-  }  
+  }
 
   // Validation 4. Name should at least contain 3 characters
   if (name.length < 3) {
-    res.status(400).json({ errorMessage: "El nombre de usuario debe tener al menos 3 carácteres" });
+    res
+      .status(400)
+      .json({
+        errorMessage: "El nombre de usuario debe tener al menos 3 carácteres",
+      });
     return;
   }
 
   // Validation 5. Email format validation
-  const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
+  const emailRegex =
+    /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
   if (!emailRegex.test(email)) {
-    res.status(400).json({ errorMessage: "Formato de correo electrónico incorrecto" });
+    res
+      .status(400)
+      .json({ errorMessage: "Formato de correo electrónico incorrecto" });
     return;
   }
 
   // Validation 6. Password format validation
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
   if (!passwordRegex.test(password)) {
-    res.status(400).json({ errorMessage: "La contraseña debe tener al menos 8 letras, una mayúscula y un número" });
+    res
+      .status(400)
+      .json({
+        errorMessage:
+          "La contraseña debe tener al menos 8 letras, una mayúscula y un número",
+      });
     return;
   }
 
   // Validation 7. Double password confirmation
   if (password !== passwordConfirmation) {
-    res.status(400).json({ errorMessage: "La contraseña debe ser igual que en el campo anterior"});
+    res
+      .status(400)
+      .json({
+        errorMessage: "La contraseña debe ser igual que en el campo anterior",
+      });
     return;
   }
 
@@ -59,7 +76,9 @@ router.post("/signup", async (req, res, next) => {
     // Validation 8: Email doesn't already exists in the DB
     const foundEmail = await User.findOne({ email });
     if (foundEmail !== null) {
-      res.status(400).json({ errorMessage: "El email ya ha sido previamente registrado" });
+      res
+        .status(400)
+        .json({ errorMessage: "El email ya ha sido previamente registrado" });
       return;
     }
 
@@ -71,75 +90,68 @@ router.post("/signup", async (req, res, next) => {
       name,
       email,
       age,
-      password: hashPassword
+      password: hashPassword,
     };
 
     // Create user in the DB
-    await User.create(newUser)
+    await User.create(newUser);
 
     // Sends OK message to the FE
     res.status(201).json("Usuario registrado correctamente");
-
   } catch (error) {
     next(error);
   }
 });
 
-
 // POST "/api/auth/login" => Validate user credentials
 router.post("/login", async (req, res, next) => {
-   
-    const { email, password } = req.body;
-  
-    // Validation 1. Fields must not be empty
-    if (!email || !password) {
-      res.status(400).json({ errorMessage: "Debe tener email y contraseña" });
+  const { email, password } = req.body;
+
+  // Validation 1. Fields must not be empty
+  if (!email || !password) {
+    res.status(400).json({ errorMessage: "Debe tener email y contraseña" });
+    return;
+  }
+
+  try {
+    // Validation 2. User already exists in the Database
+    const foundUser = await User.findOne({ email: email });
+    if (foundUser === null) {
+      res.status(400).json({ errorMessage: "Credenciales no válidas" });
       return;
     }
-  
-    try {
-      
-      // Validation 2. User already exists in the Database
-      const foundUser = await User.findOne({email: email})
-      if (foundUser === null) {
-          res.status(400).json({errorMessage: "Credenciales no válidas"})
-          return;
-      }
-  
-      // Validation 3. Password for found user in DB is correct
-      const isPasswordValid = await bcrypt.compare(password, foundUser.password)
-      if (isPasswordValid === false) {
-          res.status(400).json({errorMessage: "Credenciales no válidas"})
-          return;
-      }
-  
-      // Send user info to the FE in the payload
-      const payload = {
-          _id: foundUser._id,
-          name: foundUser.name,
-          email: foundUser.email,
-          profileImage: foundUser.profileImage
-      }
-  
-      // Token parameters
-      const authToken = jwt.sign(
-          payload,
-          process.env.TOKEN_SECRET,
-          { algorithm: "HS256", expiresIn: "6h" }
-      )
-  
-      // Send token to the client
-      res.status(200).json({ authToken: authToken});
-  
-    } catch (error) {
-      next(error);
+
+    // Validation 3. Password for found user in DB is correct
+    const isPasswordValid = await bcrypt.compare(password, foundUser.password);
+    if (isPasswordValid === false) {
+      res.status(400).json({ errorMessage: "Credenciales no válidas" });
+      return;
     }
-  });
 
+    // Send user info to the FE in the payload
+    const payload = {
+      _id: foundUser._id,
+      name: foundUser.name,
+      email: foundUser.email,
+      profileImage: foundUser.profileImage,
+    };
 
-  // GET "/api/auth/verify" => Backend to tell client if user has been validated or not through its token
-  router.get("/verify", isAuthenticated, (req, res, next) => {
-    res.status(200).json({ user: req.payload })
-  })
+    // Token parameters
+    const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
+      algorithm: "HS256",
+      expiresIn: "6h",
+    });
+
+    // Send token to the client
+    res.status(200).json({ authToken: authToken });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET "/api/auth/verify" => Backend to tell client if user has been validated or not through its token
+router.get("/verify", isAuthenticated, (req, res, next) => {
+  res.status(200).json({ user: req.payload });
+});
 
 module.exports = router;

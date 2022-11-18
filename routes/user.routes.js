@@ -3,7 +3,6 @@ const User = require("../models/User.model");
 const uploader = require("../middlewares/cloudinary.js");
 const bcrypt = require("bcryptjs");
 const isAuthenticated = require("../middlewares/auth.middlewares");
-const Product = require("../models/Product.model");
 
 // GET "/api/user" => render all users
 router.get("/", async (req, res, next) => {

@@ -10,21 +10,21 @@ const productSchema = new Schema(
     description: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     image: {
       type: String,
       required: true,
-      default: "https://nuwaay.com/wp-content/uploads/2022/01/default_256.png"
+      default: "https://nuwaay.com/wp-content/uploads/2022/01/default_256.png",
     },
     category: {
       type: String,
       enum: ["foods", "desserts", "drinks"],
-      required: true
+      required: true,
     },
     price: {
       type: Number,
-      required: true
+      required: true,
     },
     location: {
       type: String,
@@ -33,13 +33,15 @@ const productSchema = new Schema(
     },
     owner: {
       type: Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
     },
-    whoRates: [{
+    whoRates: [
+      {
         type: Schema.Types.ObjectId,
-        ref: "User"
-    }],
-    ratings: [Number]
+        ref: "User",
+      },
+    ],
+    ratings: [Number],
   },
   {
     timestamps: true,
