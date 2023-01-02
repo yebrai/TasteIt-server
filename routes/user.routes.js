@@ -35,24 +35,12 @@ router.patch(
     // Validation 1. Fields must not be empty
     if (!name || !age || !email || !password) {
       res
-        .status(400)
-        .json({ errorMessage: "Todos los campos deben ser rellenados" });
+      .status(400)
+      .json({ errorMessage: "Todos los campos deben ser rellenados" });
       return;
     }
 
-    // Validation 2. Age value between 18 - 120
-    if (age < 18) {
-      res.status(400).json({ errorMessage: "Debes tener al menos 18 años" });
-      return;
-    }
-
-    // Validation 3. Age must be a number
-    if (isNaN(Number(age))) {
-      res.status(400).json({ errorMessage: "La edad debe ser un número" });
-      return;
-    }
-
-    // Validation 4. Name should at least contain 3 characters
+    // Validation 2. Name should at least contain 3 characters
     if (name.length < 3) {
       res
         .status(400)
@@ -61,8 +49,14 @@ router.patch(
         });
       return;
     }
-
-    // Validation 5. Email format validation
+    
+    // Validation 3. Age value between 18 - 120
+    if (age < 18) {
+      res.status(400).json({ errorMessage: "Debes tener al menos 18 años" });
+      return;
+    }
+    
+    // Validation 4. Email format validation
     const emailRegex =
       /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
     if (!emailRegex.test(email)) {
@@ -72,6 +66,12 @@ router.patch(
       return;
     }
 
+    // Validation 5. Age must be a number
+    if (isNaN(Number(age))) {
+      res.status(400).json({ errorMessage: "La edad debe ser un número" });
+      return;
+    }
+    
     // Validation 6. Password format validation
     const passwordRegex =
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
@@ -84,6 +84,7 @@ router.patch(
         });
       return;
     }
+
 
     try {
       // Validation 7: Email doesn't already exists in the DB
